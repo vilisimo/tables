@@ -6,52 +6,31 @@ import table.Table;
 import utils.Containers;
 import utils.Strings;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
-import static utils.Validations.requireLarger;
 
 public class TablePrinter {
 
     private final Table table;
-
-    private final int cellPadding;
-
-    private String fancyBorder;
-    private String simpleBorder;
+    private TableDesign design;
 
     public TablePrinter(Table table) {
-        this.cellPadding = 1;
+        requireNonNull(table, "Table cannot be null");
+
         this.table = table;
-        this.fancyBorder = designBorder('+');
-        this.simpleBorder = designBorder('-');
+        design = new TableDesign(table);
     }
 
-    private String designBorder(char corner) {
-        int whitespacePadding = (cellPadding * table.columnCount()) * 2;
-        int borderPadding = table.columnCount() + 1;
-        int totalWidth = table.getWidth() + whitespacePadding + borderPadding;
-        int cornerWidth = 2;
-        String horizontalFiller = String.join("", Collections.nCopies(totalWidth - cornerWidth, "-"));
+    public TablePrinter(Table table, TableDesign design) {
+        requireNonNull(table, "Table cannot be null");
 
-        return corner + horizontalFiller + corner;
-    }
-
-    public static int usableWidth(int tableWidth, int singlePadWidth, int columns) {
-        requireLarger(0, singlePadWidth, "Width of the padding cannot be negative [entered=" + singlePadWidth + "]");
-        requireLarger(1, tableWidth, "Table width cannot be less than 1 [entered=" + tableWidth + "]");
-        requireLarger(1, columns, "Table cannot have less columns than 1 [entered=" + columns + "]");
-
-        int bordersWidth = columns + 1;
-        int totalPaddingWidth = (singlePadWidth * 2) * columns;
-        int usableWidth = tableWidth - bordersWidth - totalPaddingWidth;
-
-        if (usableWidth < 0) {
-            return 0;
-        }
-
-        return  usableWidth;
+        this.table = table;
+        this.design = ofNullable(design).orElse(new TableDesign(table));
     }
 
     public void printTable() {
@@ -60,9 +39,9 @@ public class TablePrinter {
     }
 
     private void printHeader() {
-        System.out.println(fancyBorder);
+        System.out.println(design.getFancyBorder());
         printHeaderRow();
-        System.out.println(fancyBorder);
+        System.out.println(design.getFancyBorder());
     }
 
     private void printHeaderRow() {
@@ -83,9 +62,9 @@ public class TablePrinter {
             printRow(rows.get(i));
 
             if (i == rows.size() - 1) {
-                System.out.println(fancyBorder);
+                System.out.println(design.getFancyBorder());
             } else {
-                System.out.println(simpleBorder);
+                System.out.println(design.getPlainBorder());
             }
         }
     }
@@ -135,18 +114,19 @@ public class TablePrinter {
     }
 
     private String designColumnString(String column, int size) {
-        String string = Optional.ofNullable(column).orElse("");
+        String string = ofNullable(column).orElse("");
 
         StringBuilder builder = new StringBuilder();
-        builder.append(Strings.repeat(' ', cellPadding));
+        builder.append(Strings.repeat(' ', design.getCellPaddingWidth()));
         builder.append(string);
         builder.append(Strings.repeat(' ', size - string.length()));
-        builder.append(Strings.repeat(' ', cellPadding));
+        builder.append(Strings.repeat(' ', design.getCellPaddingWidth()));
 
         return builder.toString();
     }
 
     private String attachBorders(List<String> borderlessRows) {
-        return borderlessRows.stream().collect(Collectors.joining("|", "|", "|"));
+        String verticalBorder = String.valueOf(design.getVerticalSegment());
+        return borderlessRows.stream().collect(Collectors.joining(verticalBorder, verticalBorder, verticalBorder));
     }
 }
