@@ -103,13 +103,13 @@ x = 66
 
 Or you could use the in-built static method:
 ~~~
-TablePrinter#usableWidth(int tableWidth, int singlePadWidth, int columns);
+TableDesign#usableWidth(int tableWidth, int singlePadWidth, int columns);
 ~~~
 
 You can use it to decide how wide some of the header columns should be.
 For example:
 ~~~
-int usableWidth = TablePrinter.usableWidth(79, 1, 4);
+int usableWidth = TableDesign.usableWidth(79, 1, 4);
 int first = 10;
 int second = 3;
 int third = 14;
@@ -126,3 +126,21 @@ Table table = new Table(header);
 
 This would result in a nice table that, when printed, would be 79 characters
 wide.
+
+## Changing table's design
+By default, table will have:
+* `+` as a corner
+* `-` as a horizontal segment
+* `|` as a vertical segment
+* Padding of width `1` per each side.
+
+You can modify these by creating passing a `TableDesign` object to the table:
+~~~
+TableDesign design = new TableDesign(table);
+
+design.setHorizontalSegment('=');
+design.setCellPaddingWidth(2);
+design.setVerticalSegment('!');
+
+TablePrinter printer = new TablePrinter(table, design);
+~~~
