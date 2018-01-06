@@ -1,5 +1,5 @@
 # Tables
-A library that provides basic tools to build a table and print it to your terminal.
+`tables` is a library that provides basic tools to build a table and print it to your terminal.
 
 It was extracted from [tasks](https://github.com/vilisimo/tasks) project, when building 
 and printing a table proved to be more tricky than the project itself. 
@@ -8,13 +8,13 @@ and printing a table proved to be more tricky than the project itself.
 ## Constructing a table
 To print a table, one has to have a table. It can be created like so:
 ~~~
-Table table = new Table(header)
+Table table = new Table(header);
 ~~~
 
-Table must have a header. Header decides the number of columns the table will contain.
+Table must have a header. Header determines the number of columns the table will contain.
 This number is fixed. There can be no more and no less columns.
 
-Header also decides the width of a table. Note that the table is blissfully unaware of 
+Header also dictates the width of a table. Note that the table is blissfully unaware of 
 borders or padding - this is entirely up to `TablePrinter` to decide.   
 
 ### Header
@@ -26,16 +26,16 @@ columns.put("another name", 20);
 Header header = new Header(columns);
 ~~~
 
-This will create a header with two columns and total `width` of 30. The width is 
-calculated by summing all values in a map. 
+This will create a header with two columns and a total `width` of 30. The width is 
+calculated by summing all the values in a map. 
 
-Inputting the above header into a table would mean that the table would have width 
+Supplying the above header to a table would mean that the table would have width 
 of 30, too.
 
 ### Adding rows to a table
 Table can have any number of rows. However, each row must conform to the restriction
-set by header. Namely, it must have the same amount of columns. It also should contain
-String keys/values only. 
+set by its header. Namely, it must have the same amount of columns. It also should contain
+`String` keys/values only. 
 
 Row is constructed like this:
 ~~~
@@ -59,7 +59,7 @@ TablePrinter printer = TablePrinter(table);
 printer.printTable();
 ~~~
 
-Depending on the data inside a table, this will output something like this:
+The output will be something like this:
 ~~~
 +-----------------------------------------------------------------------------+
 | TASK | DESCRIPTION                                  | CATEGORY | DEADLINE   |
@@ -71,8 +71,8 @@ Depending on the data inside a table, this will output something like this:
 +-----------------------------------------------------------------------------+
 ~~~
 
-If column width is too small to fit the data, the height of it will be resized
-to fit it, and other columns will be adjusted.
+If column width is too small to fit the data, the height of a row will be resized
+to fit it. Other columns in the same row will be adjusted, too.
 
 ### Printed table's width
 Width of the printed table is decided based on several things:
@@ -82,9 +82,9 @@ Width of the printed table is decided based on several things:
 
 The formula is something like this:
 ~~~
-border width = number of columns + 1
+total border width = number of columns + 1
 padding width = single pad width * columns * 2
-total width = table width + border width + padding width
+total width = table width + total border width + padding width
 ~~~
 
 So if you had table with 4 columns, and `x` width, total width would be:
